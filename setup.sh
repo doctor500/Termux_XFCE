@@ -49,7 +49,7 @@ fi
 
 proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt update
 proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt upgrade -y
-proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt install sudo wget nala flameshot conky-all -y
+proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt install sudo wget nala jq cava cmus tmux flameshot conky-all -y
 
 #Create user
 proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 groupadd storage
@@ -70,7 +70,16 @@ alias virgl='GALLIUM_DRIVER=virpipe '
 alias ls='exa -lF --icons'
 alias cat='bat '
 alias apt='sudo nala '
+alias tb='nc termbin.com 9999'
+alias mapscii='telnet mapscii.me'
+alias weather='curl wttr.in/?n'
+alias music='tmux new-session \;   send-keys "cmus" C-m \;   split-window -v -l 5 \;   send-keys "cava" C-m \;   select-pane -U'
+alias ascii='ascii-image-converter -C --color-bg -b -d 60,30 --threshold 175 -m " .-=+#@" -f '
 " >> $HOME/../usr/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc
+
+wget https://github.com/phoenixbyrd/Termux_XFCE/raw/main/ascii-image-converter
+mv ascii-image-converter /usr/bin
+chmod +x /usr/bin/ascii-image-converter
 
 #Set proot timezone
 timezone=$(getprop persist.sys.timezone)
@@ -80,7 +89,7 @@ proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 cp /usr/share/zoneinf
 
 setup_xfce() {
 #Install xfce4 desktop and additional packages
-pkg install git neofetch virglrenderer-android papirus-icon-theme xfce4 xfce4-goodies pavucontrol-qt exa bat cmus nala wmctrl firefox -y
+pkg install git neofetch virglrenderer-android papirus-icon-theme xfce4 xfce4-goodies pavucontrol-qt exa bat jq cava tmux cmus nala wmctrl firefox netcat-openbsd -y
 
 #Create .bashrc
 cp $HOME/../usr/var/lib/proot-distro/installed-rootfs/debian/etc/skel/.bashrc $HOME/.bashrc
@@ -92,13 +101,24 @@ pacmd load-module module-native-protocol-tcp auth-ip-acl=127.0.0.1 auth-anonymou
 " > $HOME/.sound
 echo "source $HOME/.sound" >> $HOME/.bashrc
 
+city=$(curl -s ipinfo.io | jq -r '.city')
+
 #Set aliases
 echo "
 alias debian='proot-distro login debian --user $username --shared-tmp'
 alias ls='exa -lF --icons'
 alias cat='bat '
 alias apt='nala'
+alias tb='nc termbin.com 9999'
+alias mapscii='telnet mapscii.me'
+alias weather='curl wttr.in/$city?n'
+alias music='tmux new-session \;   send-keys "cmus" C-m \;   split-window -v -l 5 \;   send-keys "cava" C-m \;   select-pane -U'
+alias ascii='ascii-image-converter -C --color-bg -b -d 60,30 --threshold 175 -m " .-=+#@" -f '
 " >> $HOME/.bashrc
+
+wget https://github.com/phoenixbyrd/Termux_XFCE/raw/main/ascii-image-converter
+mv ascii-image-converter ../usr/bin
+chmod +x /usr/bin/ascii-image-converter
 
 #Put Firefox icon on Desktop
 cp $HOME/../usr/share/applications/firefox.desktop $HOME/Desktop 
