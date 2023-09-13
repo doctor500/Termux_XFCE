@@ -81,3 +81,19 @@ Once it connects run this command
   
 ```adb shell "/system/bin/device_config put activity_manager max_phantom_processes 2147483647"```
 
+# DNS problem fix
+If you're facing DNS issue during the installation process (can't do apt-update or apt install). Create new `resolv.conf` file using nano on the termux home path (`~`) and define the DNS server you want to use.
+
+`resolv.conf` file example:
+```
+nameserver 8.8.8.8
+nameserver 1.1.1.1
+```
+
+this issue might be appear during the installation process, and you need to remove the proot again before able to re-start the installation. Execute this command to remove the distro and start the installation process:
+```
+proot-distro remove debian
+```
+```
+./setup.sh
+```
